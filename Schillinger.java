@@ -29,9 +29,10 @@ public class Schillinger {
      ArrayList<Character> newNotes = new ArrayList<Character>();
      newNotes = rhyme.reflection(music.getNotes());
      music.setNotes(newNotes);
-     //System.out.println(music.getNotes());
+     //System.out.println(music.get('T'));
      writeFile(music);
      System.out.println("\nFile called 'output.abc' has been created\n");
+     compare(music);
   }
   /*
     prompts user for file and opens the file
@@ -41,35 +42,44 @@ public class Schillinger {
   public static abc getFile(){
     ArrayList<Character> notes = new ArrayList<Character>();
     abc newFile = new abc();
-    Scanner console = new Scanner(System.in);
-    System.out.print("Enter a valid abc Music notation file.\n");
-    String fileName = console.nextLine();
-    File file = new File(fileName);
-    BufferedReader fileReader = null;
-    try {
-      fileReader = new BufferedReader(new FileReader(file));
-      String fileContents = null;
-      while ((fileContents = fileReader.readLine()) != null) {
-        /*int lineLen = fileContents.length();
-        for(int i = 0; i < lineLen; i++) {
-          notes.add(fileContents.charAt(i));
-        }*/
-        //System.out.println("About to add");
-        newFile.add(fileContents);
-        //System.out.println(".");
-      }
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
-    } finally {
+    boolean isSuccessful = false;
+    
+    while (!isSuccessful) {
+        Scanner console = new Scanner(System.in);
+        System.out.print("Enter a valid abc Music notation file.\n");
+        String fileName = console.nextLine();
+        File file = new File(fileName);
+        BufferedReader fileReader = null;
+    
+            
         try {
-            if (fileReader != null) {
-              fileReader.close();
-            }
+          fileReader = new BufferedReader(new FileReader(file));
+          String fileContents = null;
+          while ((fileContents = fileReader.readLine()) != null) {
+            /*int lineLen = fileContents.length();
+            for(int i = 0; i < lineLen; i++) {
+              notes.add(fileContents.charAt(i));
+            }*/
+            //System.out.println("About to add");
+            newFile.add(fileContents);
+            //System.out.println(".");
+          }
+          isSuccessful = true;
+        } catch (FileNotFoundException e) {
+          //e.printStackTrace();
+          System.out.println("File not found, enter a valid filename\n");
         } catch (IOException ioe) {
+          ioe.printStackTrace();
+        } finally {
+            try {
+                if (fileReader != null) {
+                  fileReader.close();
+                }
+            } catch (IOException ioe) {
+            }
         }
     }
+    
     return newFile;
   }
   
@@ -105,6 +115,39 @@ public class Schillinger {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+    }
+  }
+  
+  public static void compare(abc algFile) {
+    System.out.println("Comparing algorithmic output with correct output");
+    abc corFile = getFile();
+    ArrayList<Character> algOut = algFile.getNotes();
+    ArrayList<Character> corOut = corFile.getNotes();
+    
+    boolean same = true;
+    
+    int algLen = algOut.size();
+    int corLen = corOut.size();
+    int len = algLen;
+    
+    if (algLen != corLen) {
+        same = false;
+        System.out.printf("The length of all of the Notes is off.\n\talgLen = %s\n\tcorLen = %s\n", algLen, corLen);
+        if (corLen < algLen)
+            len = corLen;
+    }
+    
+    for (int i = 0; i < len; i++) {
+        char algChar = algOut.get(i);
+        char corChar = corOut.get(i);
+        if (algChar != corChar) {
+            System.out.printf("Notes at %d, are not the same.\n", i);
+            System.out.printf("Was '%s', should be '%s'\n", algChar, corChar);
+            same = false;
+        }
+    }
+    if (same) {
+        System.out.println("Both were the same");
     }
   }
             

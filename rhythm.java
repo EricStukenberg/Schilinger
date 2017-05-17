@@ -15,7 +15,13 @@ public class rhythm {
         for(int i = size-2; i >= 0; i--) {
             if ((Character.isLetter(notes.get(i))) || (notes.get(i) == '|')) {
                 for (int j = i; j < temp; j++) {
-                    newNotes.add(notes.get(j));
+                    if (notes.get(j) == '>') {
+                        newNotes.add('<');
+                    } else if (notes.get(j) == '<') {
+                        newNotes.add('>');
+                    } else {
+                        newNotes.add(notes.get(j));
+                    }
                 }
                 temp = i;
             }
