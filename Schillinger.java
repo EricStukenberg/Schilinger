@@ -2,7 +2,7 @@
   Western Washington University
   CSCI 491-3 Music Project: Schillinger System
   Winter 2017- Fall 2017
-  Project members: Nate Caprile, Peter Lagow, Jack Mace, Eric Stukenberg
+  Project members: Nate Caprile, Peter Lagow, Eric Stukenberg
   Project Administrator: James Hearne
 */
 import java.util.*;
@@ -19,136 +19,163 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Schillinger {
-  public static void main(String[] args) {
+    public static void main(String[] args) {
      
-     //music = getFile();
-     abc music = getFile();
-     rhythm rhyme = new rhythm();
-     //System.out.println(music.getNotes());
-     // call rhythm(music), harmony(music), melody(music), and counterpoint(music) here
-     ArrayList<Character> newNotes = new ArrayList<Character>();
-     newNotes = rhyme.reflection(music.getNotes());
-     music.setNotes(newNotes);
-     //System.out.println(music.get('T'));
-     writeFile(music);
-     System.out.println("\nFile called 'output.abc' has been created\n");
-     compare(music);
-  }
+        //music = getFile();
+        abc music = getFile();
+        rhythm rhyme = new rhythm();
+        //System.out.println(music.getNotes());
+        // call rhythm(music), harmony(music), melody(music), and counterpoint(music) here
+        abc newFile = new abc();
+        newFile.setHeader(music.copyHeader());
+        ArrayList<note> newNotes = new ArrayList<note>();
+        newNotes = rhyme.reflection(music);
+        newFile.setNotes(newNotes);
+        //System.out.println(music.get('T'));
+        writeFile(newFile);
+        System.out.println("\nFile called 'output.abc' has been created\n");
+        //compare(newFile);
+    }
   /*
-    prompts user for file and opens the file
-    then returns the contents of the file as a
-    String array.
-  */
-  public static abc getFile(){
-    ArrayList<Character> notes = new ArrayList<Character>();
-    abc newFile = new abc();
-    boolean isSuccessful = false;
+   * prompts user for file and opens the file
+   *  then returns the contents of the file as a
+   *  String array.
+   */
+    public static abc getFile(){
+        ArrayList<Character> notes = new ArrayList<Character>();
+        abc newFile = new abc();
+        boolean isSuccessful = false;
     
-    while (!isSuccessful) {
-        Scanner console = new Scanner(System.in);
-        System.out.print("Enter a valid abc Music notation file.\n");
-        String fileName = console.nextLine();
-        File file = new File(fileName);
-        BufferedReader fileReader = null;
+        while (!isSuccessful) {
+            Scanner console = new Scanner(System.in);
+            System.out.print("Enter a valid abc Music notation file.\n");
+            String fileName = console.nextLine();
+            File file = new File(fileName);
+            BufferedReader fileReader = null;
     
             
+            try {
+                fileReader = new BufferedReader(new FileReader(file));
+                String fileContents = null;
+                while ((fileContents = fileReader.readLine()) != null) {
+                /*int lineLen = fileContents.length();
+                for(int i = 0; i < lineLen; i++) {
+                notes.add(fileContents.charAt(i));
+                }*/
+                //System.out.println("About to add");
+                newFile.add(fileContents);
+                //System.out.println(".");
+            }
+                isSuccessful = true;
+            } catch (FileNotFoundException e) {
+                //e.printStackTrace();
+                System.out.println("File not found, enter a valid filename\n");
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            } finally {
+                try {
+                    if (fileReader != null) {
+                        fileReader.close();
+                    }
+                } catch (IOException ioe) {
+                }
+            }
+        }
+    
+        return newFile;
+    }
+    
+    /*
+     * Write to a created file
+     */
+    public static void writeFile(abc file) {
+        BufferedWriter bufwrite = null;
+        FileWriter filewrite = null;
+
         try {
-          fileReader = new BufferedReader(new FileReader(file));
-          String fileContents = null;
-          while ((fileContents = fileReader.readLine()) != null) {
-            /*int lineLen = fileContents.length();
-            for(int i = 0; i < lineLen; i++) {
-              notes.add(fileContents.charAt(i));
-            }*/
-            //System.out.println("About to add");
-            newFile.add(fileContents);
-            //System.out.println(".");
-          }
-          isSuccessful = true;
-        } catch (FileNotFoundException e) {
-          //e.printStackTrace();
-          System.out.println("File not found, enter a valid filename\n");
-        } catch (IOException ioe) {
-          ioe.printStackTrace();
+
+            filewrite = new FileWriter("output.abc");
+            bufwrite = new BufferedWriter(filewrite);
+    
+            String entireFile = file.toString();
+            bufwrite.write(entireFile);
+    
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             try {
-                if (fileReader != null) {
-                  fileReader.close();
+                if (bufwrite != null) {
+                    bufwrite.close();
+                }
+        
+                if (filewrite != null) {
+                    filewrite.close();
                 }
             } catch (IOException ioe) {
+                ioe.printStackTrace();
             }
         }
     }
     
-    return newFile;
-  }
-  
-  public static void writeFile(abc file) {
-    BufferedWriter bufwrite = null;
-    FileWriter filewrite = null;
     
-    try {
-    
-        filewrite = new FileWriter("output.abc");
-        bufwrite = new BufferedWriter(filewrite);
-        bufwrite.write(file.getHeader());
-        
-        ArrayList<Character> notes = file.getNotes();
-        String allNotes = "";
-        int size = notes.size();
-        for (int i = 0; i < size; i++) {
-            allNotes += notes.get(i);
-        }
-        bufwrite.write(allNotes);
-        
-    } catch (IOException e) {
-        e.printStackTrace();
-    } finally {
-        try {
-            if (bufwrite != null) {
-                bufwrite.close();
-            }
-            
-            if (filewrite != null) {
-                filewrite.close();
-            }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-    }
-  }
-  
-  public static void compare(abc algFile) {
-    System.out.println("Comparing algorithmic output with correct output");
-    abc corFile = getFile();
-    ArrayList<Character> algOut = algFile.getNotes();
-    ArrayList<Character> corOut = corFile.getNotes();
-    
-    boolean same = true;
-    
-    int algLen = algOut.size();
-    int corLen = corOut.size();
-    int len = algLen;
-    
-    if (algLen != corLen) {
-        same = false;
-        System.out.printf("The length of all of the Notes is off.\n\talgLen = %s\n\tcorLen = %s\n", algLen, corLen);
-        if (corLen < algLen)
-            len = corLen;
-    }
-    
-    for (int i = 0; i < len; i++) {
-        char algChar = algOut.get(i);
-        char corChar = corOut.get(i);
-        if (algChar != corChar) {
-            System.out.printf("Notes at %d, are not the same.\n", i);
-            System.out.printf("Was '%s', should be '%s'\n", algChar, corChar);
+    /*
+     * For testing purposes, thi8s was created to see if the file that we create
+     *  with our algorithms matches the correct answer
+     *
+     * With the newest changes, this will not work
+     */
+    public static void compare(abc algFile) {
+        System.out.println("Comparing algorithmic output with correct output");
+        abc corFile = getFile();
+        ArrayList<note> algOut = algFile.getNotes();
+        ArrayList<note> corOut = corFile.getNotes();
+
+        boolean same = true;
+
+        int algLen = algOut.size();
+        int corLen = corOut.size();
+        int len = algLen;
+
+        if (algLen != corLen) {
             same = false;
+            System.out.printf("The length of all of the Notes is off.\n\talgLen = %s\n\tcorLen = %s\n", algLen, corLen);
+            if (corLen < algLen)
+                len = corLen;
+        }
+
+        for (int i = 0; i < len; i++) {
+            note algNote = algOut.get(i);
+            note corNote = corOut.get(i);
+
+            if (compareNote(algNote.getPre(),corNote.getPre()) || compareNote(algNote.getNote(),corNote.getNote())
+                || compareNote(algNote.getPost(),corNote.getPost())) {
+                System.out.printf("Notes at %d, are not the same.\n", i);
+                System.out.printf("Was '%s', should be '%s'\n", algNote.toString(), corNote.toString());
+                same = false;
+            }
+        }
+        if (same) {
+            System.out.println("Both were the same");
         }
     }
-    if (same) {
-        System.out.println("Both were the same");
+  
+    public static boolean compareNote(ArrayList<Character> alg, ArrayList<Character> cor) {
+        int size = alg.size();
+        if (size != cor.size()) {
+            return false;
+        }
+
+        char algChar;
+        char corChar;
+        for (int i = 0; i < size; i++) {
+        algChar = alg.get(i);
+            corChar = cor.get(i);
+            if (algChar != corChar) {
+                return false;
+            }
+        }
+        return true;
     }
-  }
+        
             
 }
