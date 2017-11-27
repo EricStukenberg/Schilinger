@@ -24,6 +24,8 @@ public class Schillinger {
         //music = getFile();
         abc music = getFile();
         rhythm rhyme = new rhythm();
+        
+       
         //System.out.println(music.getNotes());
         // call rhythm(music), harmony(music), melody(music), and counterpoint(music) here
         abc newFile = new abc();
@@ -31,9 +33,18 @@ public class Schillinger {
         ArrayList<note> newNotes = new ArrayList<note>();
         newNotes = rhyme.reflection(music);
         newFile.setNotes(newNotes);
+        
+        // melody
+        melody mldy = new melody();
+        abc newMelodyFile = new abc();
+        newMelodyFile.setHeader(music.copyHeader());
+        ArrayList<note> newNotesMelody = new ArrayList<note>();
+        newNotesMelody = mldy.binary(music);
+        newMelodyFile.setNotes(newNotesMelody);
         //System.out.println(music.get('T'));
-        writeFile(newFile);
-        System.out.println("\nFile called 'output.abc' has been created\n");
+        writeFile(newFile, "output1.abc");
+        writeFile(newMelodyFile, "output2.abc");
+        System.out.println("\nFiles called 'output1.abc' and 'output2.abc' have been created\n");
         //compare(newFile);
     }
   /*
@@ -88,13 +99,13 @@ public class Schillinger {
     /*
      * Write to a created file
      */
-    public static void writeFile(abc file) {
+    public static void writeFile(abc file, String fileName) {
         BufferedWriter bufwrite = null;
         FileWriter filewrite = null;
 
         try {
 
-            filewrite = new FileWriter("output.abc");
+            filewrite = new FileWriter(fileName);
             bufwrite = new BufferedWriter(filewrite);
     
             String entireFile = file.toString();
