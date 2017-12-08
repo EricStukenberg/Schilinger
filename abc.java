@@ -1,8 +1,14 @@
 import java.util.*;
 
 public class abc {
+    
+    //private static final HashSet<Character> preSet = {'.', '<', '>', '^', '@', '='};
+    //private static final HashSet<Character> postSet = {'/', '\', '#', '='};
+    
     private ArrayList<note> notes;
     private ArrayList<String> header;
+    private ArrayList<Integer> bars;
+    private ArrayList<Integer> repeats;
     private HashSet<Character> preSet;
     private HashSet<Character> postSet;
     private String stringNotes;
@@ -12,11 +18,37 @@ public class abc {
      * Creates the necessary HashSets
      */
     public abc () {
-        notes = new ArrayList<note>();
-        header = new ArrayList<String>();
-        preSet = new HashSet<Character>();
-        stringNotes = "";
+        this.notes = new ArrayList<note>();
+        this.header = new ArrayList<String>();
+        this.bars = new ArrayList<Integer>();
+        this.repeats = new ArrayList<Integer>();
         
+        stringNotes = "";
+        preSet = new HashSet<Character>();
+        
+        preSet.add('.');
+        preSet.add('<');
+        preSet.add('>');
+        preSet.add('^');
+        preSet.add('@');
+        preSet.add('=');
+        
+        postSet = new HashSet<Character>();
+        
+        postSet.add('/');
+        postSet.add('\'');
+        postSet.add('#');
+        postSet.add(' ');
+    }
+    
+    public abc (abc file) {
+        this.notes = new ArrayList<note>();
+        this.header = file.copyHeader();
+        this.bars = new ArrayList<Integer>(file.getBars());
+        this.repeats = new ArrayList<Integer>(file.getRepeats());
+        
+        stringNotes = "";
+        preSet = new HashSet<Character>();
         
         preSet.add('.');
         preSet.add('<');
@@ -45,6 +77,8 @@ public class abc {
             ArrayList<Character> tempNote;
             ArrayList<Character> tempPost;
             //System.out.println(line);
+            
+            stringNotes = line;
             int i = 0;
             int check;
             while (i < lineLen) {
@@ -80,6 +114,19 @@ public class abc {
                     i++;
                     check = 1;
                 }
+
+                if ((i < (lineLen)) && (line.charAt(i) == '|')) {
+                    //System.out.println("bar...");
+                    //System.out.println("Barlines is empty1: " +bars.isEmpty());
+                    if (line.charAt(i) == ':') {
+                        repeats.add(notes.size());
+                    }
+                    bars.add(notes.size());
+                    //System.out.println("Adding bar at: " +(notes.size()));
+                    i++;
+                    check = 1;
+                    //System.out.printf("adding bar at: %d\n", notes.size());
+                }
                 
                 if (check == 0) {
                     i++;
@@ -88,10 +135,14 @@ public class abc {
                     //System.out.println("TempNote: "+tempNote);
                     notes.add(new note(tempPre, tempNote, tempPost));
                 }
+                //System.out.println("Barlines is empty3: " +barLines.isEmpty());
             }
             addBars();
-            
+            //System.out.println("Barlines is empty(After AddBars): " +bars.isEmpty());
         }
+        
+        //System.out.println("Barlines is empty (end of line): " +bars.isEmpty());
+        //System.out.println("Header is empty: " +header.isEmpty());
     }
     
     /*
@@ -114,6 +165,21 @@ public class abc {
         //System.out.println(notes); 
         return notes;
     }
+
+    /*
+     *  gets for the barlines
+     */
+    public ArrayList<Integer> getBars() {
+        return new ArrayList<Integer>(bars);
+    }
+    
+    /*
+     *  gets for the repeats for barlines
+     */
+    public ArrayList<Integer> getRepeats() {
+        return repeats;
+    }
+    
     
     
     /*
@@ -158,6 +224,39 @@ public class abc {
         addBars();
     }
     
+    /*
+     * Changes the bars to the new file
+     */
+    public void setBars(ArrayList<Integer> tempBars, ArrayList<Integer> tempRepeats) {
+        bars = tempBars;
+        repeats = tempRepeats;
+    }
+    
+    /*
+     * Flips the positions of the bars
+     */
+    public void flipBars() {
+        ArrayList<Integer> tempBars = new ArrayList<Integer>();
+        int size = notes.size();
+        int tempInt;
+        for (int i=bars.size()-2; i >= 0; i--) {
+            tempInt = bars.get(i);
+            System.out.printf("Bars: %d - %d\n", size, tempInt);
+            tempBars.add(size-(tempInt+2));
+        }
+        tempBars.add(bars.get(bars.size()-1));
+        bars = tempBars;
+        
+        ArrayList<Integer> tempRepeats = new ArrayList<Integer>();
+        size = notes.size();
+        for (int i=repeats.size()-2; i >= 0; i--) {
+            tempInt = repeats.get(i);
+            //System.out.printf("Repeats: %d - %d\n", size, tempInt);
+            tempRepeats.add(size-tempInt);
+        }
+        repeats = tempRepeats;
+    }
+    
     /* 
      * Changes the header to a new set
      */
@@ -172,11 +271,25 @@ public class abc {
         String entireFile = getHeader();
         
         int size = notes.size();
+        //System.out.println(bars);
         note tempNote;
         for (int i = 0; i < size; i++) {
             tempNote = notes.get(i);
             entireFile += tempNote.toString();
+            //System.out.println(tempNote.toString());
+
+
+            //System.out.println("Barlines is empty(toString): " +bars.isEmpty());
+            //System.out.println("Header is empty(toString): " +header.isEmpty());
+            if (repeats.contains(i)) {
+                entireFile += ":";
+            }
+            if (bars.contains(i)) {
+                entireFile += "|";
+                //System.out.println("Outputing Bar");
+            }
         }
+        //System.out.println("StringNotes: "+ stringNotes);
         return entireFile;
         
         //return stringNotes
@@ -195,6 +308,31 @@ public class abc {
      *  best then feel free to change it. It was just a thought.
      */
      private void addBars() {
-     
+        //System.out.println("Barlines is empty (AddBars): " +bars.isEmpty());
+//          /* Retrieve the beat length and the length of a meter */
+//          String noteLength = get('L');
+//          String meterType = get('M');
+// 
+//          /* Figure out the type of length and meter */
+//         int baseSize = Integer.parseInt(noteLength);
+//         int meterSize = Integer.parseInt(meterType);
+// 
+//          /* Run through the line notes array and place where the bars should be */
+//         int size = notes.size(); 
+//         int curTotal;
+//         note tempNote;
+//         ArrayList<Character> tempPost;
+//         for(int i = 0; i < size; i++) {
+//             tempNote = notes.get(i);
+//             tempPost = tempNote.getPost();
+//             curTotal = 0;
+//             
+// 
+//             
+//             
+//         }
+// 
+//          //stringNotes
+//          
      }
 }

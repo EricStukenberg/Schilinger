@@ -3,15 +3,25 @@ import java.io.*;
 import java.util.*;
 
 public class rhythm {
+
+    /*
+     * If this equals 0 then nothing will be added
+     * If this equals 1 then we need to add '>' to the next preSet
+     * If this equals 2 then we need to add '<' to the next preSet
+     */
+    private int preChange;
+    
     public rhythm() {
-        /* DO nothing */
+        /* Do nothing */
+        preChange = 0;
     }
     
     /*
-     * THe logic to rearrange the notes for reflection
+     * The logic to rearrange the notes for reflection
      */
     public ArrayList<note> reflection(abc file) {
         // Ask here if the user wants to use a specific
+        preChange = 0;
         ArrayList<note> notes = file.getNotes();
         int size = notes.size();
         
@@ -25,41 +35,85 @@ public class rhythm {
         note reflectedNote;
         
         for (int i = 0; i < size; i++) {
+            //preChange = 0;
             oldNote = notes.get(i);
             reflectedNote = notes.get((size-1)-i);
             
             //System.out.printf("oldNote: |%s|\n", oldNote.toString());
             //System.out.printf("reflectedNote: |%s|\n\n", reflectedNote.toString());
             
+            /* Need to add the '>' or '<' for the +1 of the following preSet */
+            
             tempPre = switchPre(reflectedNote.getPre());
-            tempNote = switchPre(oldNote.getNote());
+            tempNote = switchNote(oldNote.getNote());
             tempPost = switchPost(reflectedNote.getPost());
             
             newNotes.add(new note(tempPre, tempNote, tempPost));
+            
+            //System.out.println("preChange value for next: "+ preChange);
         }
         return newNotes;
     }
     
     /*
-     * rearrange certain characters if necessary for reflection
+     * Rearrange certain characters if necessary for reflection
      */
     private ArrayList<Character> switchPre(ArrayList<Character> temp) {
         ArrayList<Character> newPre = new ArrayList<Character>();
         int total = temp.size();
         char curChar;
+        /* Add switched signs to new placements */
+        if (preChange == 1) {
+            newPre.add('>');
+        } else if(preChange == 2) {
+            newPre.add('<');
+        }
+        preChange = 0;
+        
         for (int i = 0; i < total; i++) {
             curChar = temp.get(i);
             //System.out.printf("%c\n",curChar);
             switch (curChar) {
-                case '<': curChar = '>';
+                case '<': 
+                    preChange = 1; 
+                    //curChar = ''; //curChar = '>';
+                    //System.out.println("1");
                     break;
-                case '>': curChar = '<';
+                case '>': 
+                    preChange = 2; 
+                    //System.out.println("2");
+                    //curChar = ''; //curChar = '<';
                     break;
-                default: /* DO NOTHING */
+                default: 
+                    //System.out.println("Moving to default: "+ preChange);
+                    //preChange = 0;
+                    newPre.add(curChar);
+                    /* DO NOTHING */
             }
-            newPre.add(curChar);
+            
         }
         return newPre;
+    }
+    
+    /*
+     * rearrange certain characters if necessary for reflection
+     */
+    private ArrayList<Character> switchNote(ArrayList<Character> temp) {
+        ArrayList<Character> newNote = new ArrayList<Character>();
+        int total = temp.size();
+        char curChar;
+        for (int i = 0; i < total; i++) {
+            curChar = temp.get(i);
+            switch (curChar) {
+                /*case '<': curChar = '>';
+                    break;
+                case '>': curChar = '<';
+                    break;*/
+                default: /* DO NOTHING */
+            }
+            newNote.add(curChar);
+        }
+        return newNote;
     }
     
     /*

@@ -19,34 +19,128 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Schillinger {
+    
+    /* All Questions for User 
+    static String manipulateFile = "How would you like to change this file?\n\t1: Rhythm\n\t2:Melody\n\n";
+    static String incorrectAns = "Choose either: \n\t1: Rhythm\n\t2:Melody\n\n";
+        
+    static String rhythmChoices = "How do you want the rhythm to change?\n\t1: Reflection\n\t2: Circular Rotation\n\n";
+    static String incorrectRhy = "Choose either: \n\t1: Reflection\n\t2: Circular Rotation\n\n";
+        
+    static String melodyChoices = "How do you want the melody to change?\n\t1: Binary\n\t2: Fibonacci\n\n";
+    static String incorrectMel = "Choose either: \n\t1: Binary\n\t2: Fibonacci\n\n;
+        
+    static String anyElse = "What would you like to do?\n\t1: Change the file again\n\t2: Export\n\n";
+    static String incorrectElse = "Choose either: \n\t1: Change the file again\n\t2: Export\n\n";*/
+    
+    static String[] userQuestions = {
+        "How would you like to change this file?\n\t1: Rhythm\n\t2: Melody\n\t3: Both\n\n",
+        "Choose either: \n\t1: Rhythm\n\t2: Melody\n\t3: Both\n\n",
+        "How do you want the rhythm to change?\n\t1: Reflection\n\t2: Circular Rotation\n\n",
+        "Choose either: \n\t1: Reflection\n\t2: Circular Rotation\n\n",
+        "How do you want the melody to change?\n\t1: Binary\n\t2: Fibonacci\n\n",
+        "Choose either: \n\t1: Binary\n\t2: Fibonacci\n\n",
+        "What would you like to do?\n\t1: Change the file again\n\t2: Export\n\n",
+        "Choose either: \n\t1: Change the file again\n\t2: Export\n\n"};
+    
+    
+    
     public static void main(String[] args) {
-     
-        //music = getFile();
-        abc music = getFile();
+                
+        
+        abc music = getFile();        
+        //System.out.println("Got music file");
         rhythm rhyme = new rhythm();
-        
-       
-        //System.out.println(music.getNotes());
-        // call rhythm(music), harmony(music), melody(music), and counterpoint(music) here
-        abc newFile = new abc();
-        newFile.setHeader(music.copyHeader());
-        ArrayList<note> newNotes = new ArrayList<note>();
-        newNotes = rhyme.reflection(music);
-        newFile.setNotes(newNotes);
-        
-        // melody
         melody mldy = new melody();
-        abc newMelodyFile = new abc();
-        newMelodyFile.setHeader(music.copyHeader());
-        ArrayList<note> newNotesMelody = new ArrayList<note>();
-        newNotesMelody = mldy.binary(music);
-        newMelodyFile.setNotes(newNotesMelody);
-        //System.out.println(music.get('T'));
-        writeFile(newFile, "output1.abc");
-        writeFile(newMelodyFile, "output2.abc");
-        System.out.println("\nFiles called 'output1.abc' and 'output2.abc' have been created\n");
-        //compare(newFile);
+        
+        boolean done = false;
+        
+        abc newFile = new abc(music);
+        //System.out.println("Copied music");
+        while (!done) {
+            int choice = getUserInfo(0);
+            int subChoice;
+            
+            //System.out.println("Choice in main: '"+choice+"'");
+            
+            /* This means that we are going to change the Rhythm */
+            if (choice == 1) {
+                //System.out.println("All bout that ryhtmCHeck");
+                subChoice = getUserInfo(2);
+                //System.out.println("All bout that ryhtm");
+                if (subChoice == 1) {
+                    //System.out.println("We are reflectingin");
+                    newFile.setNotes(rhyme.reflection(music));
+                    newFile.flipBars();
+                } else if (subChoice == 2) {
+                    //newFile.setNotes(rhyme.circularRotation(music));
+                } else {
+                    System.out.println("Should not be here rhy");
+                    /* Do Nothing */
+                }
+            
+            /* This means that we are going to change the Melody */
+            } else if (choice == 2) {
+                subChoice = getUserInfo(4);
+                
+                if (subChoice == 1) {
+                    newFile.setNotes(mldy.binary(music));
+                } else if (subChoice == 2) {
+                    newFile.setNotes(mldy.fibonacci(music));
+                } else {
+                    System.out.println("Should not be here mel");
+                    /* Do Nothing */
+                }
+            } else {
+                System.out.println("Shouldn't be here");
+                /* Do Nothing */
+            }
+            
+            choice = getUserInfo(6);
+            if (choice == 1) {
+                /* Don't have to do anything since we will run this again */
+            } else if (choice == 2) {
+                writeFile(newFile, "output.abc");
+                System.out.println("\nFile called 'output.abc' has been created\n");
+                done = true;
+            } else {
+                /* Do nothing as of now... */
+            }
+        }
     }
+    
+    /*
+     * Gets user choice
+     * Input: The location of the beginning of the question set
+     */
+     public static int getUserInfo(int num) {
+        //Scanner console = new Scanner(System.in);
+        int choice = 0;
+        boolean ans = false;
+        System.out.print(userQuestions[num]);
+        
+        while (!ans) {
+            Scanner console = new Scanner(System.in);
+            while (console.hasNextLine()) {
+                if (console.hasNextInt()) {
+                    choice = console.nextInt();
+                    //System.out.println("Choice: "+choice);
+                    if (choice == 1 || choice == 2) {
+                        ans = true;
+                        break;
+                    }
+                } else {
+                    console.nextLine();
+                }
+                if (!ans) {
+                    System.out.print(userQuestions[num+1]);
+                }
+            }
+        }
+        return choice;
+    }
+    
+    
   /*
    * prompts user for file and opens the file
    *  then returns the contents of the file as a
@@ -130,7 +224,7 @@ public class Schillinger {
     
     
     /*
-     * For testing purposes, thi8s was created to see if the file that we create
+     * For testing purposes, this was created to see if the file that we create
      *  with our algorithms matches the correct answer
      *
      * With the newest changes, this will not work
