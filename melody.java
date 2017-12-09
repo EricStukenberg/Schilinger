@@ -73,7 +73,7 @@ public class melody {
                 /*Do nothing */
             } else {
                 //System.out.println("Old: " +tempNote.get(letter)+ " new: "+ newNote);
-                newNote = caseHelper(tempNote.get(letter), newNote);
+                newNote = caseHelper(letter, tempNote, newNote);
                 //System.out.println("Old: " +tempNote.get(letter)+ " new: "+ newNote);
                 tempNote.set(letter, newNote.charAt(0)); 
                 for(int j = 1; j < noteLen; j++) {
@@ -149,7 +149,7 @@ public class melody {
                 //System.out.println("Z man");
             } else {
                 //System.out.println("Old: " +tempNote.get(letter)+ " new: "+ newNote);
-                newNote = caseHelper(tempNote.get(letter), newNote);
+                newNote = caseHelper(letter, tempNote, newNote);
                 //System.out.println("Old: " +tempNote.get(letter)+ " new: "+ newNote);
                 tempNote.set(letter, newNote.charAt(0)); 
                 for(int j = 1; j < noteLen; j++) {
@@ -177,13 +177,30 @@ public class melody {
    }
    
    /* This will check how high on the scale we have gone */
-   private String caseHelper(char origNote, String biNote) {
-      if (Character.isUpperCase(origNote)) {
+   private String caseHelper(int let, ArrayList<Character> origNote, String biNote) {
+      if (Character.isUpperCase(origNote.get(let))) {
+        //System.out.println("do we get here? " +biNote);
+        if (biNote.contains( "'") || biNote.contains("’")) {
+            biNote = biNote.toLowerCase();
+            //System.out.println(origNote + "biNOte: "+biNote);
+            if (origNote.contains(39) || origNote.contains(8217)) {
+                System.out.println("Found the fun dudes");
+                biNote = biNote.replace((char) 39,(char) 0);
+                biNote = biNote.replace((char) 8217,(char) 0);
+            }
+        } else {
          //System.out.println("Is Upperase");
-         biNote = biNote.toUpperCase();
+            biNote = biNote.toUpperCase();
+            
+        }
       } else {
          //System.out.println("THis will be lowercase");
          biNote = biNote.toLowerCase();
+         if (origNote.contains(39) || origNote.contains(8217)) {
+            System.out.println("Found the fun dudes");
+            biNote = biNote.replace((char) 39,(char) 0);
+            biNote = biNote.replace((char) 8217,(char) 0);
+         }
          //System.out.println("Lowercase?: "+biNote);
       }
       return biNote;

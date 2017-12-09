@@ -20,19 +20,6 @@ import java.io.IOException;
 
 public class Schillinger {
     
-    /* All Questions for User 
-    static String manipulateFile = "How would you like to change this file?\n\t1: Rhythm\n\t2:Melody\n\n";
-    static String incorrectAns = "Choose either: \n\t1: Rhythm\n\t2:Melody\n\n";
-        
-    static String rhythmChoices = "How do you want the rhythm to change?\n\t1: Reflection\n\t2: Circular Rotation\n\n";
-    static String incorrectRhy = "Choose either: \n\t1: Reflection\n\t2: Circular Rotation\n\n";
-        
-    static String melodyChoices = "How do you want the melody to change?\n\t1: Binary\n\t2: Fibonacci\n\n";
-    static String incorrectMel = "Choose either: \n\t1: Binary\n\t2: Fibonacci\n\n;
-        
-    static String anyElse = "What would you like to do?\n\t1: Change the file again\n\t2: Export\n\n";
-    static String incorrectElse = "Choose either: \n\t1: Change the file again\n\t2: Export\n\n";*/
-    
     static String[] userQuestions = {
         "How would you like to change this file?\n\t1: Rhythm\n\t2: Melody\n\t3: Both\n\n",
         "Choose either: \n\t1: Rhythm\n\t2: Melody\n\t3: Both\n\n",
