@@ -90,7 +90,7 @@ public class abc {
                 check = 0;
                 //System.out.println(i);
                 //notes.add(line.charAt(i));
-                System.out.printf("%d:  %c, %d\n",i, line.charAt(i), (int) line.charAt(i));
+                //System.out.printf("%d:  %c, %d\n",i, line.charAt(i), (int) line.charAt(i));
                 while ((i < lineLen) && (preSet.contains(line.charAt(i)))) {
                     //System.out.println("pre...");
                     tempPre.add(line.charAt(i));
@@ -137,13 +137,13 @@ public class abc {
                     //System.out.println("Barlines is empty1: " +bars.isEmpty());
                     if (line.charAt(i-1) == ':') {
                         repeats.add(notes.size());
-                        System.out.println("Adding repeat at: " +(notes.size()));
+                        //System.out.println("Adding repeat at: " +(notes.size()));
                     } else if (((i+1) < lineLen) && (line.charAt(i+1) == ':')) {
                         repeats.add(notes.size());
-                        System.out.println("Adding repeat at: " +(notes.size()));
+                        //System.out.println("Adding repeat at: " +(notes.size()));
                     }
                     bars.add(notes.size());
-                    System.out.println("Adding bar at: " +(notes.size()));
+                    //System.out.println("Adding bar at: " +(notes.size()));
                     i++;
                     check = 1;
                     //System.out.printf("adding bar at: %d\n", notes.size());
@@ -159,15 +159,15 @@ public class abc {
                     //System.out.println("NewNote: "+ notes.get(notes.size()-1).toString());
                     //System.out.println("tempPre: "+ tempPre);
                     if ((bars.size() > 0) && (bars.get(bars.size()-1) == (notes.size()-1))) {
-                        System.out.println("Add Bar here: " + (notes.size()-1));
+                        //System.out.println("Add Bar here: " + (notes.size()-1));
                     }
                     
                 }
                 //System.out.println("Barlines is empty3: " +barLines.isEmpty());
             }
             addBars();
-            System.out.println("Barlines is empty(After AddBars): " +notes.size());
-            System.out.println("Replines is empty(After AddBars): " +repeats.size());
+            //System.out.println("Barlines is empty(After AddBars): " +notes.size());
+            //System.out.println("Replines is empty(After AddBars): " +repeats.size());
         }
         
         //System.out.println("Barlines is empty (end of line): " +bars.isEmpty());
@@ -270,7 +270,7 @@ public class abc {
         int tempInt;
         for (int i=bars.size()-2; i >= 0; i--) {
             tempInt = bars.get(i);
-            System.out.printf("Bars: %d - %d\n", size, tempInt);
+            //System.out.printf("Bars: %d - %d\n", size, tempInt);
             tempBars.add(size-(tempInt+2));
         }
         tempBars.add(bars.get(bars.size()-1));

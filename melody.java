@@ -78,6 +78,10 @@ public class melody {
                 tempNote.set(letter, newNote.charAt(0)); 
                 for(int j = 1; j < noteLen; j++) {
                    tempNote.add(j+letter, newNote.charAt(j));
+                }                
+                if ((tempNote.contains((char) 39) || tempNote.contains((char) 8217)) && (binary < 7)) {
+                    tempNote.remove((char) 39);
+                    tempNote.remove((char) 8217);
                 }
                 binary += (int) Math.pow(2, power);
                 power += 1;
@@ -146,7 +150,6 @@ public class melody {
             /* Means it's a rest */
             if (tempNote.get(letter) == 'z') {
                 /*Do nothing */
-                //System.out.println("Z man");
             } else {
                 //System.out.println("Old: " +tempNote.get(letter)+ " new: "+ newNote);
                 newNote = caseHelper(letter, tempNote, newNote);
@@ -154,6 +157,10 @@ public class melody {
                 tempNote.set(letter, newNote.charAt(0)); 
                 for(int j = 1; j < noteLen; j++) {
                    tempNote.add(j+letter, newNote.charAt(j));
+                }
+                if ((tempNote.contains((char) 39) || tempNote.contains((char) 8217)) && (total < 7)) {
+                    tempNote.remove(Character.valueOf((char) 39));
+                    tempNote.remove(Character.valueOf((char) 8217));
                 }
                 fibCur = fibPrev;
                 fibPrev = total;
@@ -183,8 +190,7 @@ public class melody {
         if (biNote.contains( "'") || biNote.contains("’")) {
             biNote = biNote.toLowerCase();
             //System.out.println(origNote + "biNOte: "+biNote);
-            if (origNote.contains(39) || origNote.contains(8217)) {
-                System.out.println("Found the fun dudes");
+            if (origNote.contains((char) 39) || origNote.contains((char) 8217)) {
                 biNote = biNote.replace((char) 39,(char) 0);
                 biNote = biNote.replace((char) 8217,(char) 0);
             }
@@ -196,8 +202,7 @@ public class melody {
       } else {
          //System.out.println("THis will be lowercase");
          biNote = biNote.toLowerCase();
-         if (origNote.contains(39) || origNote.contains(8217)) {
-            System.out.println("Found the fun dudes");
+         if (origNote.contains((char) 39) || origNote.contains((char) 8217)) {
             biNote = biNote.replace((char) 39,(char) 0);
             biNote = biNote.replace((char) 8217,(char) 0);
          }
